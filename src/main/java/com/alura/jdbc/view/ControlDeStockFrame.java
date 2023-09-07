@@ -55,6 +55,7 @@ public class ControlDeStockFrame extends JFrame {
         modelo.addColumn("Identificador del Producto");
         modelo.addColumn("Nombre del Producto");
         modelo.addColumn("Descripción del Producto");
+        modelo.addColumn("Cantidad");
 
         cargarTabla();
 
@@ -208,22 +209,6 @@ public class ControlDeStockFrame extends JFrame {
                 }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
-    private void cargarTabla() {
-        try {
-            var productos = this.productoController.listar();
-        }catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-
-        try {
-            // TODO
-            // productos.forEach(producto -> modelo.addRow(new Object[] { "id", "nombre",
-            // "descripcion" }));
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
     private void guardar() {
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "Los campos Nombre y Descripción son requeridos.");
@@ -250,6 +235,23 @@ public class ControlDeStockFrame extends JFrame {
 
         this.limpiarFormulario();
     }
+
+    private void cargarTabla() {
+        try {
+            var productos = this.productoController.listar();
+
+            try {
+                //Por cada producto tenemos un foreEach, que agrega una columna(Campos) en el modelo
+                productos.forEach(producto -> modelo.addRow(new Object[] { producto.get("ID"), producto.get("NOMBRE"), producto.get("DESCRIPCION"), producto.get("CANTIDAD")}));
+            } catch (Exception e) {
+                throw e;
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     private void limpiarFormulario() {
         this.textoNombre.setText("");
