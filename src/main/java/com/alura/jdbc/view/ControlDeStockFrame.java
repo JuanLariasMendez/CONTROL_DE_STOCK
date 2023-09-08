@@ -193,6 +193,7 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void eliminar() {
+        //lógica de validación
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
@@ -200,13 +201,21 @@ public class ControlDeStockFrame extends JFrame {
 
         Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
                 .ifPresentOrElse(fila -> {
-                    Integer id = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
+                    //casteo, conversion String a un Integer
+                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
 
-                    this.productoController.eliminar(id);
+                    //Al eliminar, este envía el ID del proudcto para saber cual es que tiene que ser eliminado
+                    int cantidadEliminada; //debe de esta declarada fuera, porque vamos a decir cuantos elementos han sido eliminados
+                    try {
+                         cantidadEliminada= this.productoController.eliminar(id);
+                    } catch (SQLException e) {
+                        //encapsulamos la excepcion en un RunTimeException
+                        throw new RuntimeException(e);
+                    }
 
                     modelo.removeRow(tabla.getSelectedRow());
 
-                    JOptionPane.showMessageDialog(this, "Item eliminado con éxito!");
+                    JOptionPane.showMessageDialog(this, cantidadEliminada+" Item eliminado con éxito!");
                 }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 

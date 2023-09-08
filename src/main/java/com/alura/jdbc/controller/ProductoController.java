@@ -14,11 +14,25 @@ public class ProductoController {
 		// TODO
 	}
 
-	public void eliminar(Integer id) {
-		// TODO
+	public int /*void*/ eliminar(Integer id) throws SQLException {
+		//Instancia la conexion para hacer posible el qyery/statement
+		Connection con = new ConnectionFactory().recuperaConexion();
+
+		//Creación del statemnt/query
+		Statement statement = con.createStatement();
+
+		statement.execute("DELETE FROM PRODUCTO WHERE ID = " + id);
+
+		//Para corroborar que el elemento haya sido eliminado
+		//Nos devuelve cuantas filas fueron modificadas luego de hacer el query dentro del statement
+		//Al asignar el mensaje a una variable, tenemos que hacer un sout
+		//int updateCount = statement.getUpdateCount();
+		//Con retur, el programa nos da el mensaje, esto para no hacer un sout
+		return statement.getUpdateCount();
 	}
 
 	public List<Map<String, String>> listar() throws SQLException {
+		//Instancia la conexion para hacer posible el qyery/statement
 		Connection con = new ConnectionFactory().recuperaConexion();
 
 		//Para establecer conexion con mysql
