@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Optional;
 
 import javax.swing.JButton;
@@ -210,6 +211,7 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void guardar() {
+        //Validacion para ver si los campos estan vacios o no
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "Los campos Nombre y Descripción son requeridos.");
             return;
@@ -217,6 +219,7 @@ public class ControlDeStockFrame extends JFrame {
 
         Integer cantidadInt;
 
+        //Validacion para corroborar la cantidad
         try {
             cantidadInt = Integer.parseInt(textoCantidad.getText());
         } catch (NumberFormatException e) {
@@ -225,11 +228,20 @@ public class ControlDeStockFrame extends JFrame {
             return;
         }
 
+        //nosotros reformamos el formulario en un objeto de producto y nosotros enviamos la información para el método guardar.
         // TODO
-        var producto = new Object[] { textoNombre.getText(), textoDescripcion.getText(), cantidadInt };
+        var producto = new HashMap<String, String>();
+        producto.put("NOMBRE",textoNombre.getText());
+        producto.put("DESCRIPCION",textoDescripcion.getText());
+        producto.put("CANTIDAD", String.valueOf(cantidadInt));
+
         var categoria = comboCategoria.getSelectedItem();
 
-        this.productoController.guardar(producto);
+        try {
+            this.productoController.guardar(producto);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
