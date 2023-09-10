@@ -10,8 +10,27 @@ import java.util.Map;
 
 public class ProductoController {
 
-	public void modificar(String nombre, String descripcion, Integer id) {
-		// TODO
+	public int modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
+		//Instancia la conexion para hacer posible el qyery/statement
+		Connection con = new ConnectionFactory().recuperaConexion();
+
+		//Creación del statemnt/query
+		Statement statement = con.createStatement();
+
+		statement.execute("UPDATE PRODUCTO SET "
+				+ " NOMBRE = '" + nombre + "'"
+				+ ", DESCRIPCION = '" + descripcion + "'"
+				+ ", CANTIDAD = " + cantidad
+				+ " WHERE ID = " + id);
+
+		int updateCount = statement.getUpdateCount();
+
+		con.close();
+
+		//Para corroborar que el elemento han sido actualizados
+		//Nos devuelve cuantas filas fueron modificadas luego de hacer el query dentro del statement
+		//Con retur, el programa nos da el mensaje, esto para no hacer un sout
+		return updateCount;
 	}
 
 	public int /*void*/ eliminar(Integer id) throws SQLException {
@@ -86,12 +105,23 @@ public class ProductoController {
     public void guardar(Map<String,String> producto) throws SQLException {
 		Connection con = new ConnectionFactory().recuperaConexion();
 
-		Statement statement = con.createStatement();
+			//Creado un statement, y concatenango los valores
+			/*Statement statement = con.createStatement();
+			statement.execute("INSERT INTO PRODUCTO(nombre, descripcion, cantidad) "
+			+ " VALUES('" +producto.get("NOMBRE")+ "', '"
+			+ producto.get("DESCRIPCION")+ "', "
+			+ producto.get("CANTIDAD") + ")", Statement.RETURN_GENERATED_KEYS);*/
 
-		statement.execute("INSERT INTO PRODUCTO(nombre, descripcion, cantidad) "
-		+ " VALUES('" +producto.get("NOMBRE")+ "', '"
-		+ producto.get("DESCRIPCION")+ "', "
-		+ producto.get("CANTIDAD") + ")", Statement.RETURN_GENERATED_KEYS);
+		//Preparando un statemen para pasar la responsabilidad a SQL de validar la query
+		PreparedStatement statement = con.prepareStatement("INSERT INTO PRODUCTO(nombre, descripcion, cantidad) "
+				+ " VALUES(?,?,?,?",
+				Statement.RETURN_GENERATED_KEYS);
+		//Setteando los valores de la query, estos tienen que ir en el mismo orden en el que lo pusimos en el query
+		statement.setString(1,producto.get("NOMBRE"));
+		statement.setString(2,producto.get("DESCRIPCION"));
+		statement.setInt(3,Integer.valueOf(producto.get("CANTIDAD")));
+
+		statement.execute();
 
 		ResultSet resultSet = statement.getGeneratedKeys(); //En esta variable tenemos el listado de IDs que fueron generados
 
