@@ -14,14 +14,28 @@ public class ProductoController {
 		//Instancia la conexion para hacer posible el qyery/statement
 		Connection con = new ConnectionFactory().recuperaConexion();
 
+		//------------CONCATENANDO LOS VALORES EN LA QUERY---------------
 		//Creación del statemnt/query
-		Statement statement = con.createStatement();
-
+		/*Statement statement = con.createStatement();
 		statement.execute("UPDATE PRODUCTO SET "
 				+ " NOMBRE = '" + nombre + "'"
 				+ ", DESCRIPCION = '" + descripcion + "'"
 				+ ", CANTIDAD = " + cantidad
-				+ " WHERE ID = " + id);
+				+ " WHERE ID = " + id);*/
+
+		//-------PASANDO LA RERPONSABILDIAD DE VER LOS VALORES AL JDBC-----------
+		PreparedStatement statement = con.prepareStatement("UPDATE PRODUCTO SET "
+				+ " NOMBRE = ?"
+				+ ", DESCRIPCION = ?"
+				+ ", CANTIDAD = ?"
+				+ " WHERE ID = ?" );
+		statement.setString(1,nombre);
+		statement.setString(2,descripcion);
+		statement.setInt(3,cantidad);
+		statement.setInt(4,id);
+
+		statement.execute();
+
 
 		int updateCount = statement.getUpdateCount();
 
@@ -37,10 +51,16 @@ public class ProductoController {
 		//Instancia la conexion para hacer posible el qyery/statement
 		Connection con = new ConnectionFactory().recuperaConexion();
 
+		//------------CONCATENANDO LOS VALORES EN LA QUERY---------------
 		//Creación del statemnt/query
-		Statement statement = con.createStatement();
+		/*Statement statement = con.createStatement();
+		statement.execute("DELETE FROM PRODUCTO WHERE ID = " + id);*/
 
-		statement.execute("DELETE FROM PRODUCTO WHERE ID = " + id);
+		//-------PASANDO LA RERPONSABILDIAD DE VER LOS VALORES AL JDBC-----------
+		PreparedStatement statement = con.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
+		statement.setInt(1, id);
+		statement.execute();
+
 
 		//Para corroborar que el elemento haya sido eliminado
 		//Nos devuelve cuantas filas fueron modificadas luego de hacer el query dentro del statement
@@ -51,6 +71,7 @@ public class ProductoController {
 	}
 
 	public List<Map<String, String>> listar() throws SQLException {
+
 		//Instancia la conexion para hacer posible el qyery/statement
 		Connection con = new ConnectionFactory().recuperaConexion();
 
@@ -60,10 +81,17 @@ public class ProductoController {
 				"root",
 				"Seminar1O22023");*/
 
-		//Los querys en java son llamdos Statements
+		//------------CONCATENANDO LOS VALORES EN LA QUERY---------------
+		/*//Los querys en java son llamdos Statements
 		Statement statement = con.createStatement();
 		//Devuelve un boolean debido a que indica que el statemnt si el resultado es un listado = true, si se ejecuta cualquier otro query este devuelve false
-		/*boolean result =*/ statement.execute("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTO");
+		*//*boolean result =*//* statement.execute("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTO");
+		*/
+
+		//-------PASANDO LA RERPONSABILDIAD DE VER LOS VALORES AL JDBC-----------
+		PreparedStatement statement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTO");
+		statement.execute();
+
 
 		//tomando el resultado del statement/query select
 		ResultSet resultSet = statement.getResultSet();
