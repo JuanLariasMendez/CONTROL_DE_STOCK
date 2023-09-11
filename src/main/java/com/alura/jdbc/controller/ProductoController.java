@@ -1,6 +1,7 @@
 package com.alura.jdbc.controller;
 
 import com.alura.jdbc.factory.ConnectionFactory;
+import com.alura.jdbc.modelo.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -131,11 +132,13 @@ public class ProductoController {
 		*/
 	}
 
-    public void guardar(Map<String,String> producto) throws SQLException {
-		String nombre = producto.get("NOMBRE");
-		String descripcion = producto.get("DESCRIPCION");
-		Integer cantidad = Integer.valueOf(producto.get("CANTIDAD"));
-		Integer maximoCantidad= 50;
+    public void guardar(/*Map<String,String>*/Producto producto) throws SQLException {
+		/*String nombre = producto.getNombre();
+		String descripcion = producto.getDescripcion();
+		//Refactorizado ya que no estarémos utilizando mas el hashMap
+		// Integer cantidad = Integer.valueOf(producto.getCantidad);
+		Integer cantidad = producto.getCantidad();
+		Integer maximoCantidad= 50;*/
 
 		//----CONEXIÓN CON MYSQL-----
 		//Se habre la conexion
@@ -163,39 +166,40 @@ public class ProductoController {
 				//si vamos a estar ejecutando y tomando siempre el menor valor posible para ir guardando y pensando que el máximo que podemos guardar es 50, entonces si la cantidad es mayor que 50, la próxima vez que pasemos por este lazo, por este loop, nosotros tenemos que guardar lo restante.
 			try(statement){
 					//si la ejecución acá tiene un error, él ejecuta registro o cualquier cosa que hay acá dentro del try tiene un error, vamos a caer en el catch, nosotros vamos a hacer un rollback de la transacción, vamos a cerrar la conexión y no hay ningún problema. Nosotros cancelamos la ejecución de estas transacciones.
-					do{
-						// si es la cantidad tiene valor 100 y máximoCantidad es 50, el valor mínimo acá va a ser 50. Si el valor cantidad es 40 por ejemplo y el máximoCantidad es 50, el valor de cantidad para guardar va a ser 40.
-						int cantidadParaGuardar = Math.min(cantidad,maximoCantidad);
+				/*do{
+					// si es la cantidad tiene valor 100 y máximoCantidad es 50, el valor mínimo acá va a ser 50. Si el valor cantidad es 40 por ejemplo y el máximoCantidad es 50, el valor de cantidad para guardar va a ser 40.
+					int cantidadParaGuardar = Math.min(cantidad,maximoCantidad);*/
+					//Enviamos el objeto producto para efectuar el reguistro
+					EjecutaReguistro(producto,statement);
 
-						EjecutaReguistro(statement, nombre, descripcion, cantidadParaGuardar);
-
-						//Acá voy a estar haciendo una substracción del valor de cantidad del máximoCantidad.
-						cantidad -= maximoCantidad;
-						//Mientras cantidad sea mayor a cero, entonces sigue haciendo el loop
-					}while (cantidad>0);
+					//Acá voy a estar haciendo una substracción del valor de cantidad del máximoCantidad.
+					/*cantidad -= maximoCantidad;
+					//Mientras cantidad sea mayor a cero, entonces sigue haciendo el loop
+				}while (cantidad>0);*/
 
 					con.commit();
 					System.out.println("COMMIT");
 
 				}catch (Exception e){
-				System.out.println("ROLLBACK");
-				con.rollback();
-			}
+					System.out.println("ROLLBACK");
+					con.rollback();
+				}
 		}
 			//statement.close(); //Ya no es necesario debido a que utilizamos try/catch whit resource, y este método ya trae el close por defecto
 			//con.close(); //Ya no es necesario debido a que utilizamos try/catch whit resource, y este método ya trae el close por defecto
 	}
 
-	private static void EjecutaReguistro(PreparedStatement statement, String nombre, String descripcion, Integer cantidad) throws SQLException {
+	//Método para ejecutar el query de INSERT en la Base de datos
+	private static void EjecutaReguistro(Producto producto,PreparedStatement statement) throws SQLException {
 		//Pruebas de commits exitosos
 		/*if (cantidad<50){
 			throw new RuntimeException("Ocurrio un error");
 		}*/
 
 		//Setteando los valores de la query, estos tienen que ir en el mismo orden en el que lo pusimos en el query
-		statement.setString(1, nombre);
-		statement.setString(2, descripcion);
-		statement.setInt(3, cantidad);
+		statement.setString(1, producto.getNombre());
+		statement.setString(2, producto.getDescripcion());
+		statement.setInt(3, producto.getCantidad());
 		statement.execute();
 
 		/*-----try catch whitch resourese------*/
@@ -218,13 +222,13 @@ public class ProductoController {
 		try(resultSet)/*En esta variable tenemos el listado de IDs que fueron generados)*/{
 			//Con este loop, podemos listar el listado de IDs que fue generado
 			while (resultSet.next()) {
-				System.out.println(
-						String.format(
-								"Fue insertado el producto de ID:%d",
-								resultSet.getInt(1)));
+				producto.setId(resultSet.getInt(1));
+				System.out.println(String.format("Fue insertado el producto %s", producto));
+				/*System.out.println(
+						//Em vez de imprimir el ID genera roducto de ID:%d",
+								resultSet.getInt(1));*/
 			}
 		}
-
 	}
 }
 
