@@ -1,14 +1,36 @@
 package com.alura.jdbc.factory;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionFactory {
+    private DataSource dataSource;
+
+    //Constructor
+    public ConnectionFactory(){
+        var pooledDataSource = new ComboPooledDataSource();
+        pooledDataSource.setJdbcUrl("jdbc:mysql://localhost:3308/control_de_stock?useTimeZona=true&serverTimeZone=UTC");
+        pooledDataSource.setUser("root");
+        pooledDataSource.setPassword("Seminar1O22023");
+
+        //Configuracion de cuantas conexiones máximas puede tener abirtas el pool
+        pooledDataSource.setMaxPoolSize(10);
+
+
+        this.dataSource = pooledDataSource;
+    }
+
     public Connection recuperaConexion() throws SQLException {
+        //Creacion de conexion utilizando el datapool
+        return this.dataSource.getConnection();
+
+        /*//Creación de conexión pura
         return DriverManager.getConnection(
                 "jdbc:mysql://localhost:3308/control_de_stock?useTimeZona=true&serverTimeZone=UTC",
                 "root",
-                "Seminar1O22023");
+                "Seminar1O22023");*/
     }
 }
