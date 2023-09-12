@@ -5,27 +5,33 @@ import com.alura.jdbc.modelo.Producto;
 import com.alura.jdbc.dao.ProductoDAO;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class ProductoController {
+	private ProductoDAO productoDAO;
 
-	public int modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
-		//Instancia la conexion para hacer posible el qyery/statement
+	//Constructor
+	public void ProductoController(){
+		this.productoDAO = new ProductoDAO(new ConnectionFactory().recuperaConexion());
+	}
+
+	public int modificar(String nombre, String descripcion, Integer cantidad, Integer id) {
+		return productoDAO.modificar(nombre,descripcion,cantidad,id);
+
+		/*//Instancia la conexion para hacer posible el qyery/statement
 		ConnectionFactory factory = new ConnectionFactory();
-		final Connection con = factory.recuperaConexion();
+		final ConneSction con = factory.recuperaConexion();
 
 		try(con) {
 			//------------CONCATENANDO LOS VALORES EN LA QUERY---------------
 			//Creación del statemnt/query
-		/*Statement statement = con.createStatement();
+		*//*Statement statement = con.createStatement();
 		statement.execute("UPDATE PRODUCTO SET "
 				+ " NOMBRE = '" + nombre + "'"
 				+ ", DESCRIPCION = '" + descripcion + "'"
 				+ ", CANTIDAD = " + cantidad
-				+ " WHERE ID = " + id);*/
+				+ " WHERE ID = " + id);*//*
 
 			//-------PASANDO LA RERPONSABILDIAD DE VER LOS VALORES AL JDBC-----------
 			final PreparedStatement statement = con.prepareStatement("UPDATE PRODUCTO SET "
@@ -48,39 +54,19 @@ public class ProductoController {
 				//Con retur, el programa nos da el mensaje, esto para no hacer un sout
 				return updateCount;
 			}
-		}
+		}*/
 	}
 
-	public int /*void*/ eliminar(Integer id) throws SQLException {
+	public int /*void*/ eliminar(Integer id)  {
 		//Instancia la conexion para hacer posible el qyery/statement
-		final Connection con = new ConnectionFactory().recuperaConexion();
-
-		try(con) {
-			//------------CONCATENANDO LOS VALORES EN LA QUERY---------------
-			//Creación del statemnt/query
-			/*Statement statement = con.createStatement();
-			statement.execute("DELETE FROM PRODUCTO WHERE ID = " + id);*/
-
-			//-------PASANDO LA RERPONSABILDIAD DE VER LOS VALORES AL JDBC-----------
-			final PreparedStatement statement = con.prepareStatement("DELETE FROM PRODUCTO WHERE ID = ?");
-
-			try(statement) {
-				statement.setInt(1, id);
-				statement.execute();
-
-				//Para corroborar que el elemento haya sido eliminado
-				//Nos devuelve cuantas filas fueron modificadas luego de hacer el query dentro del statement
-				//Al asignar el mensaje a una variable, tenemos que hacer un sout
-				//int updateCount = statement.getUpdateCount();
-				//Con retur, el programa nos da el mensaje, esto para no hacer un sout
-
-				return statement.getUpdateCount();
-				//con.close();
-			}
-		}
+		return productoDAO.eliminar(id);
 	}
 
-	public List<Map<String, String>> listar() throws SQLException {
+	public List<Producto> listar(){
+		//Instancia de un productoDAO que nos devolvera el listado de productos
+		return ProductoDAO.listar();
+
+		/*List<Producto>  resultado = new ArrayList<>();
 		//Instancia la conexion para hacer posible el qyery/statement
 		final Connection con = new ConnectionFactory().recuperaConexion();
 
@@ -98,7 +84,10 @@ public class ProductoController {
 
 				//Para ir ingresando un valor abajo de un valor, hacemos un recorrido de toda la tabla, valor por valor
 				while (resultSet.next()){
-					Map<String, String> fila = new HashMap<>();
+					Producto fila = new Producto(resultSet.getInt("ID"),
+							resultSet.getString("NOMBRE"),
+							resultSet.getString("DESCRIPCION"),
+							resultSet.getInt("CANTIDAD");                            );
 					//Como el mapa establecido es tipo String, con los valores int, debemos de convertirlos
 					fila.put("ID", String.valueOf (resultSet.getInt("ID")));//Para mostrar los ID ingresados
 					fila.put("NOMBRE",resultSet.getString("NOMBRE"));//Para mostrar los NOMBRES ingresados
@@ -107,16 +96,18 @@ public class ProductoController {
 					fila.put("CANTIDAD", String.valueOf (resultSet.getInt("CANTIDAD")));//Para mostrar las CANTIDADES ingresadas
 
 					resultado.add(fila);//cada resultado lo vamos agregando a las filas
-					/*
+					*//*
 					//Para las columnas int, numericos, tenemos el siguiente método
 					resultSet.getInt("ID");//Este método nos devuelve la parte numerica de los campos numericos que tengamos
-					 */
+					 *//*
 				}
 				return resultado;
 				//System.out.println(result);
 				//con.close();
 			}
-		}
+		}catch (SQLException e){
+			throw new RuntimeException(e);
+		}*/
 
 
 		//Para establecer conexion con mysql
@@ -133,10 +124,14 @@ public class ProductoController {
 		*/
 	}
 
-    public void guardar(Producto producto) throws SQLException {
-		ProductoDAO ProductoDAO = new ProductoDAO(new ConnectionFactory().recuperaConexion());
-		ProductoDAO.guardar(producto);
+	public void guardar(Producto producto) {
+		productoDAO.guardar(producto);
 	}
+
+    /*public void guardar(Producto producto){
+		ProductoDAO.guardar(producto);
+		//ProductoDAO ProductoDAO = new ProductoDAO(new ConnectionFactory().recuperaConexion());
+	}*/
     /*public void guardar(*//*Map<String,String>*//*Producto producto) throws SQLException {
 		*//*String nombre = producto.getNombre();
 		String descripcion = producto.getDescripcion();

@@ -23,9 +23,13 @@ public class ConnectionFactory {
         this.dataSource = pooledDataSource;
     }
 
-    public Connection recuperaConexion() throws SQLException {
+    public Connection recuperaConexion() {
         //Creacion de conexion utilizando el datapool
-        return this.dataSource.getConnection();
+        try {
+            return this.dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         /*//Creación de conexión pura
         return DriverManager.getConnection(
