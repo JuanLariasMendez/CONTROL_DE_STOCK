@@ -236,13 +236,6 @@ public class ControlDeStockFrame extends JFrame {
             return;
         }
 
-        //nosotros reformamos el formulario en un objeto de producto y nosotros enviamos la información para el método guardar.
-        // Forma inicial, sin utilizar un modelo para producto
-        /*var producto = new HashMap<String, String>();
-        producto.put("NOMBRE",textoNombre.getText());
-        producto.put("DESCRIPCION",textoDescripcion.getText());
-        producto.put("CANTIDAD", String.valueOf(cantidadInt));*/
-
         // Segunda forma, un modelo para producto y utilizando el constructor
         var producto = new Producto(textoNombre.getText(),
                 textoDescripcion.getText(),
@@ -272,8 +265,6 @@ public class ControlDeStockFrame extends JFrame {
                         producto.getDescripcion(),
                         producto.getCantidad()}));
     }
-
-
 
     private void limpiarFormulario() {
         this.textoNombre.setText("");
