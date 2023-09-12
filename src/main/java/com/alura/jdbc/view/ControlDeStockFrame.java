@@ -34,6 +34,12 @@ public class ControlDeStockFrame extends JFrame {
     private ProductoController productoController;
     private CategoriaController categoriaController;
 
+    /**
+     * Constructor que contiene el código que crea nuestra pantalla,
+     * que enlista y registra los productos.
+     *
+     * Hace parte del VIEW
+     */
     public ControlDeStockFrame() {
         super("Productos");
 
@@ -219,6 +225,7 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void guardar() {
+        //Tomas todas las instrucciones del formulario y luego las tranforma en un objeto tipo Producto
         //Validacion para ver si los campos estan vacios o no
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "Los campos Nombre y Descripción son requeridos.");
@@ -237,18 +244,18 @@ public class ControlDeStockFrame extends JFrame {
         }
 
         // Segunda forma, un modelo para producto y utilizando el constructor
+        //Crea un objeto de tipo producto con las instrucciones del formulario
         var producto = new Producto(textoNombre.getText(),
                 textoDescripcion.getText(),
                 cantidadInt);
 
         var categoria = comboCategoria.getSelectedItem();
 
+        /**
+         * Envía el objeto tipo Producto hacia el método guardar en el productoController
+         */
         this.productoController.guardar(producto);
-        /*try {
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-*/
+
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
         this.limpiarFormulario();

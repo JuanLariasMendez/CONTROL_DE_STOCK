@@ -7,6 +7,11 @@ import com.alura.jdbc.dao.ProductoDAO;
 import java.sql.*;
 import java.util.List;
 
+/**
+ * Capa que hace la conexión de la vista con la capa de datos
+ * Contiene las lógicas de negocio para manipular los datos antes de
+ * guardar en la base de datos o para devolver a la pantalla.
+ */
 
 public class ProductoController {
 	/**
