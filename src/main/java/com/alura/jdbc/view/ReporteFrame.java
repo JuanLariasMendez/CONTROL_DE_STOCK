@@ -7,6 +7,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
+import com.alura.jdbc.controller.ProductoController;
 
 public class ReporteFrame extends JFrame {
 
@@ -17,10 +18,13 @@ public class ReporteFrame extends JFrame {
 
     private CategoriaController categoriaController;
 
+    //private ProductoController productoController;
+
     public ReporteFrame(ControlDeStockFrame controlDeStockFrame) {
         super("Reporte de produtos del stock");
 
         this.categoriaController = new CategoriaController();
+        //this.productoController = new ProductoController();
 
         Container container = getContentPane();
         setLayout(null);
@@ -42,12 +46,26 @@ public class ReporteFrame extends JFrame {
         setLocationRelativeTo(controlDeStockFrame);
     }
 
+    //Método en ReporteFrae para generar el reporte
     private void cargaReporte() {
         var contenido = categoriaController.cargaReporte();
-        
-        // TODO
-        contenido.forEach(fila -> modelo
-                .addRow(new Object[] {}));
-    }
 
+        //En cada fila agregamos una propia fila
+        //Para cada categoría que tenemos nosotros vamos a hacer la búsqueda de los productos en el productoController para poder agregar acá en el listado también como una nueva fila
+        contenido.forEach(categoria -> {
+            modelo.addRow(new Object[]{categoria}); //fila con titulo categoria
+
+            //var productos = this.productoController.listar(categoria); //listado de productos // tenemos acá la parte en donde vamos a productoController que va a productoDAO para buscar al listado de productos por la categoría
+            //sacamos el productoController de acá del escenario y agregamos el listado de productos de la categoría.
+            var productos = categoria.getProductos(); //tenemos acá la parte en donde vamos a productoController que va a productoDAO para buscar al listado de productos por la categoría
+
+            productos.forEach(producto -> modelo.addRow(
+                    new Object[]{
+                            "",/*fila vacia*/
+                            producto.getNombre(), //Columna para nombre
+                            producto.getCantidad() //Columna para cantidad
+                    }
+            ));
+        });
+    }
 }

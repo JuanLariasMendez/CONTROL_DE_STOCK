@@ -247,16 +247,18 @@ public class ControlDeStockFrame extends JFrame {
 
         // Segunda forma, un modelo para producto y utilizando el constructor
         //Crea un objeto de tipo producto con las instrucciones del formulario
-        var producto = new Producto(textoNombre.getText(),
+        var producto = new Producto(
+                textoNombre.getText(),
                 textoDescripcion.getText(),
                 cantidadInt);
 
-        var categoria = comboCategoria.getSelectedItem();
+        var categoria = (Categoria)comboCategoria.getSelectedItem();
 
-        /**
-         * Envía el objeto tipo Producto hacia el método guardar en el productoController
+        /*
+          Envía el objeto tipo Producto hacia el método guardar en el productoController
          */
-        this.productoController.guardar(producto);
+        //this.productoController.guardar(producto, categoria.getId());
+        this.productoController.guardar(producto,categoria.getId());
 
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 

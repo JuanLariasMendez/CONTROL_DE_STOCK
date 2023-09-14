@@ -20,9 +20,10 @@ public class CategoriaController {
 		return categoriaDAO.lista();
 	}
 
-    public List<?> cargaReporte() {
-        // TODO
-        return new ArrayList<>();
+    public List<Categoria> cargaReporte() {
+        //Ahora el que se encargará de generar el reporte es el ProductoDAO, ya no un método listar
+        return this.categoriaDAO.listarConProductos();
+        //return this.listar(); //devuolción de todas las categorias
     }
 
 }

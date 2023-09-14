@@ -11,16 +11,15 @@ public class ConnectionFactory {
 
     //Constructor
     public ConnectionFactory(){
-        var pooledDataSource = new ComboPooledDataSource();
-        pooledDataSource.setJdbcUrl("jdbc:mysql://localhost:3308/control_de_stock?useTimeZona=true&serverTimeZone=UTC");
-        pooledDataSource.setUser("root");
-        pooledDataSource.setPassword("Seminar1O22023");
+        var PooledDataSource = new ComboPooledDataSource();
+        PooledDataSource.setJdbcUrl("jdbc:mysql://localhost:3308/control_de_stock?useTimeZona=true&serverTimeZone=UTC");
+        PooledDataSource.setUser("root");
+        PooledDataSource.setPassword("Seminar1O22023");
 
         //Configuracion de cuantas conexiones máximas puede tener abirtas el pool
-        pooledDataSource.setMaxPoolSize(10);
+        PooledDataSource.setMaxPoolSize(10);
 
-
-        this.dataSource = pooledDataSource;
+        this.dataSource = PooledDataSource;
     }
 
     public Connection recuperaConexion() {

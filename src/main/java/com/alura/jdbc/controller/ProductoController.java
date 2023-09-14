@@ -1,10 +1,10 @@
 package com.alura.jdbc.controller;
 
 import com.alura.jdbc.factory.ConnectionFactory;
+import com.alura.jdbc.modelo.Categoria;
 import com.alura.jdbc.modelo.Producto;
 import com.alura.jdbc.dao.ProductoDAO;
 
-import java.sql.*;
 import java.util.List;
 
 /**
@@ -22,8 +22,9 @@ public class ProductoController {
 	/**
 	 * Constructor en el que hacemos la instancia directa a la conexión
 	 */
-	public void ProductoController(){
-		this.productoDAO = new ProductoDAO(new ConnectionFactory().recuperaConexion());
+	public ProductoController(){
+		var factory = new ConnectionFactory();
+		this.productoDAO = new ProductoDAO(factory.recuperaConexion());
 	}
 
 	/**
@@ -37,12 +38,12 @@ public class ProductoController {
 	}
 
 	/**
-	 * Método para listar los productos, en el que toda la lógica esta en ProductoDAO
+	 * Método para listar todos  los productos, en el que toda la lógica esta en ProductoDAO
 	 * @return
 	 */
 	public List<Producto> listar(){
 		//Instancia de un productoDAO que nos devolvera el listado de productos
-		return ProductoDAO.listar();
+		return productoDAO.listar();
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class ProductoController {
 	 * @return
 	 */
 	public int modificar(String nombre, String descripcion, Integer cantidad, Integer id) {
-		return productoDAO.modificar(nombre,descripcion,cantidad,id);
+		return productoDAO.modificar(nombre, descripcion, cantidad, id);
 	}
 
 	/**
@@ -65,9 +66,14 @@ public class ProductoController {
 	 * y por insertarlos en la base de datos
 	 * @param producto
 	 */
-	public void guardar(Producto producto) {
+	public void guardar(Producto producto, Integer categoriaId) {
+		producto.setCategoriaId(categoriaId);
 		productoDAO.guardar(producto);
 	}
 
+	//Sobreescritura del Método listar, que busca todos los productos pero por categoria
+	public List<Producto> listar (Categoria categoria){
+		return productoDAO.listar(categoria); //busqueda de los productos por su categoria
+	}
 }
 
